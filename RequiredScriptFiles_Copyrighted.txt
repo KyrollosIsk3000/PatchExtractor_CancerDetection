@@ -1,0 +1,58 @@
+<<< Copyrighted script files required for the patch extractor script to work >>>
+
+Three script files from the original dataset’s authors were used in the patch extractor script, namely get_data_from_XML.py, getUID.py and utils.py. The script files can be downloaded from Ref. [1], which is specified at the bottom of this text file. Minor changes were made to the first two files mentioned so they would work as part of the patch extractor script.
+
+The if and elif statements of the _to_one_hot() method in the get_data_from_XML.py file of the authors of the Lung-PET-CT-Dx dataset were modified to avoid the execution of the else code block. The else code block was originally executed when, for example, an annotation file for a computed tomography (CT) image had the label “a” instead of “A” for adenocarcinoma. Python objects are case-sensitive, so Python considered these labels to be different from each other. However, both labels referred to the same lung cancer type.
+
+The exact changes in the above-mentioned script file were ...
+<<< Original code (lines 58 - 71 of get_data_from_XML.py) >>>
+def _to_one_hot(self, name):
+        one_hot_vector = [0] * self.num_classes
+        if name == 'A':
+            one_hot_vector[0] = 1
+        elif name == 'B':
+            one_hot_vector[1] = 1
+        elif name == 'E':
+            one_hot_vector[2] = 1
+        elif name == 'G':
+            one_hot_vector[3] = 1
+        else:
+            print('unknown label: %s' %name)
+
+        return one_hot_vector
+        
+<<< The modifications I made to the original code in lines 58 - 71 of get_data_from_XML.py >>>
+def _to_one_hot(self, name):
+        one_hot_vector = [0] * self.num_classes
+        if name in set(["A", "a"]):
+            one_hot_vector[0] = 1
+        elif name in set(["B", "b"]):
+            one_hot_vector[1] = 1
+        elif name in set(["E", "e"]):
+            one_hot_vector[2] = 1
+        elif name in set(["G", "g"]):
+            one_hot_vector[3] = 1
+        else:
+            print('unknown label: %s' %name)
+
+        return one_hot_vector
+        
+
+As for the authors’ getUID.py file, line 14 which allowed access to all CT images in the Lung-PET-CT-Dx dataset directory was commented out and replaced to narrow down the access of the patch extractor script to only the good-quality CT images in the dataset. Line 24 was also replaced to provide consistency in the format of paths to files and directories.
+
+<<< Original code (line 14 of getUID.py) >>>
+date_path = os.path.join(path, date)
+
+<<< The modifications I made to the original code in line 14 of getUID.py >>>
+date_path = os.path.join(path)
+
+
+<<< Original code (line 24 of getUID.py) >>>
+dicom_path = os.path.join(series_path, dicom)
+
+<<< The modifications I made to the original code in line 24 of getUID.py >>>
+dicom_path = os.path.join(series_path, dicom).replace("\\", "/")
+
+
+References:
+[1] P. Li, S. Wang, T. Li, J. Lu, Y. HuangFu, and D. Wang, A Large-Scale CT and PET/CT Dataset for Lung Cancer Diagnosis (Lung-PET-CT-Dx). 2020, The Cancer Imaging Archive (TCIA). (https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=70224216)

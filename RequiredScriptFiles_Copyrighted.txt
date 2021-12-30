@@ -1,4 +1,4 @@
-<<< Copyrighted script files required for the patch extractor script to work >>>
+<<< Copyrighted script files required for the patch extractor script, KI_PatchExtractor.py, to work >>>
 
 Three script files from the original dataset’s authors were used in the patch extractor script, namely get_data_from_XML.py, getUID.py and utils.py. The script files can be downloaded from Ref. [1], which is specified at the bottom of this text file. Minor changes were made to the first two files mentioned so they would work as part of the patch extractor script.
 
